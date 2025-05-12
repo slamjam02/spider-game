@@ -4,19 +4,26 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public Rigidbody2D rigidBody;
-    protected Vector2 moveDirection;
+
+
+    private Rigidbody2D rigidBody;
     private BoxCollider2D boxCollider;
 
+    [Header("Layers")]
+    [SerializeField] protected LayerMask wallLayer;
+    [SerializeField] protected LayerMask groundLayer;
+    [SerializeField] protected float checkRadiusOffset = 0.1f; // Offset below the collider
+
+    [Header("Movement")]
     [SerializeField] protected float moveSpeed;
     [SerializeField] protected float friction;
+
+    [Header("Jump")]
     [SerializeField] protected float jumpForce = 5f;
     [SerializeField] protected float jumpCooldown = 0.5f;
-    [SerializeField] protected LayerMask groundLayer;
-    [SerializeField] protected float groundCheckRadiusOffset = 0.1f; // Offset below the collider
+
 
     private float lastJumpTime = -Mathf.Infinity;
-
     public static PlayerMovement Instance;
 
     void Awake()
@@ -47,11 +54,11 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        moveDirection = new Vector2(Input.GetAxis("Horizontal"), 0);
-        Move();
+        Vector2 moveDirection = new Vector2(Input.GetAxis("Horizontal"), 0);
+        Move(moveDirection);
     }
 
-    protected void Move()
+    protected void Move(Vector2 moveDirection)
     {
         float targetVelocityX = moveDirection.x * moveSpeed;
         float currentVelocityX = rigidBody.velocity.x;
@@ -66,6 +73,8 @@ public class PlayerMovement : MonoBehaviour
             rigidBody.velocity = new Vector2(rigidBody.velocity.x * (1 - friction * Time.fixedDeltaTime), rigidBody.velocity.y);
         }
     }
+
+    
     protected void Jump()
     {
         rigidBody.velocity = new Vector2(rigidBody.velocity.x, jumpForce);
@@ -74,8 +83,16 @@ public class PlayerMovement : MonoBehaviour
 
     protected bool IsGrounded()
     {
-        Vector2 groundCheckPosition = new Vector2(transform.position.x, transform.position.y - boxCollider.bounds.extents.y - groundCheckRadiusOffset);
+        Vector2 groundCheckPosition = new Vector2(transform.position.x, transform.position.y - boxCollider.bounds.extents.y - checkRadiusOffset);
         float checkRadius = 0.05f;
         return Physics2D.OverlapCircle(groundCheckPosition, checkRadius, groundLayer);
+    }
+
+    // This function is unfinished, it doesn't really do anything yet
+    protected bool IsAgainstWallSide()
+    {
+        Vector2 wallCheckPosition = new Vector2(transform.position.x, transform.position.y - boxCollider.bounds.extents.y - checkRadiusOffset);
+        float checkRadius = 0.05f;
+        return Physics2D.OverlapCircle(wallCheckPosition, checkRadius, wallLayer); 
     }
 }
