@@ -44,6 +44,17 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Time.timeScale == 1f)
         {
+
+            // Get the center position of the collider in world space
+            Vector3 center = boxCollider.transform.TransformPoint(boxCollider.offset);
+            // Get the size of the collider in world space
+            Vector3 size = boxCollider.transform.TransformVector(boxCollider.size);
+            // Get edge positions of box collider
+            float leftX = center.x - (size.x / 2f);
+            float rightX = center.x + (size.x / 2f);
+            float topY = center.y + (size.y / 2f);
+            float bottomY = center.y - (size.y / 2f);
+
             if (IsGrounded() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown)
             {
                 Jump();
@@ -61,9 +72,9 @@ public class PlayerMovement : MonoBehaviour
 
     protected void Move(Vector2 moveDirection)
     {
-        if (IsAgainstWallSide()){
-            return;
-        }
+        
+
+
         float targetVelocityX = moveDirection.x * moveSpeed;
         float currentVelocityX = rigidBody.velocity.x;
 
@@ -79,6 +90,7 @@ public class PlayerMovement : MonoBehaviour
         
 
     }
+
 
     
     protected void Jump()
