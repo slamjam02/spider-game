@@ -49,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
                 Jump();
                 lastJumpTime = Time.time;
             }
+            
         }
     }
 
@@ -60,6 +61,9 @@ public class PlayerMovement : MonoBehaviour
 
     protected void Move(Vector2 moveDirection)
     {
+        if (IsAgainstWallSide()){
+            return;
+        }
         float targetVelocityX = moveDirection.x * moveSpeed;
         float currentVelocityX = rigidBody.velocity.x;
 
@@ -72,6 +76,8 @@ public class PlayerMovement : MonoBehaviour
         {
             rigidBody.velocity = new Vector2(rigidBody.velocity.x * (1 - friction * Time.fixedDeltaTime), rigidBody.velocity.y);
         }
+        
+
     }
 
     
@@ -91,7 +97,7 @@ public class PlayerMovement : MonoBehaviour
     // This function is unfinished, it doesn't really do anything yet
     protected bool IsAgainstWallSide()
     {
-        Vector2 wallCheckPosition = new Vector2(transform.position.x, transform.position.y - boxCollider.bounds.extents.y - checkRadiusOffset);
+        Vector2 wallCheckPosition = new Vector2(transform.position.x - boxCollider.bounds.extents.x - checkRadiusOffset, transform.position.y);
         float checkRadius = 0.05f;
         return Physics2D.OverlapCircle(wallCheckPosition, checkRadius, wallLayer); 
     }
