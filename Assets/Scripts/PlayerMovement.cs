@@ -62,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
                 lastJumpTime = Time.time;
             }
 
-            if (IsAgainstWallSide() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown){
+            if (IsAgainstWallSide() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown){
                 // Player sliding against all to the right
                 if(Input.GetAxis("Horizontal") > 0){
                     ResetMovement();
