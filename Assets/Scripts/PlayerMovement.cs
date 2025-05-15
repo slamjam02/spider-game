@@ -7,7 +7,10 @@ public class PlayerMovement : MonoBehaviour
 
 
     private Rigidbody2D rigidBody;
+    private Transform transform;
     private BoxCollider2D boxCollider;
+    [SerializeField] protected GroundCheck groundCheck;
+    [SerializeField] protected WallCheck wallCheck;
 
     [Header("Layers")]
     [SerializeField] protected LayerMask wallLayer;
@@ -17,6 +20,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement")]
     [SerializeField] protected float moveSpeed;
     [SerializeField] protected float friction;
+
+    [SerializeField] protected float slideSpeed = 0.1f;
 
     [Header("Jump")]
     [SerializeField] protected float jumpForce = 5f;
@@ -38,23 +43,13 @@ public class PlayerMovement : MonoBehaviour
     {
         rigidBody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
+        transform = GetComponent<Transform>();
     }
 
     void Update()
     {
         if (Time.timeScale == 1f)
         {
-
-            // Get the center position of the collider in world space
-            Vector3 center = boxCollider.transform.TransformPoint(boxCollider.offset);
-            // Get the size of the collider in world space
-            Vector3 size = boxCollider.transform.TransformVector(boxCollider.size);
-            // Get edge positions of box collider
-            float leftX = center.x - (size.x / 2f);
-            float rightX = center.x + (size.x / 2f);
-            float topY = center.y + (size.y / 2f);
-            float bottomY = center.y - (size.y / 2f);
-
             if (IsGrounded() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown)
             {
                 Jump();
@@ -67,14 +62,22 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         Vector2 moveDirection = new Vector2(Input.GetAxis("Horizontal"), 0);
+
+        if(IsAgainstWallSide() && (moveDirection != new Vector2(0f,0f))){
+            SlideDownWall();
+        }
+
         Move(moveDirection);
+
+    }
+
+    protected void SlideDownWall() {
+        transform.Translate(0f,-slideSpeed,0f);
     }
 
     protected void Move(Vector2 moveDirection)
     {
         
-
-
         float targetVelocityX = moveDirection.x * moveSpeed;
         float currentVelocityX = rigidBody.velocity.x;
 
@@ -87,30 +90,20 @@ public class PlayerMovement : MonoBehaviour
         {
             rigidBody.velocity = new Vector2(rigidBody.velocity.x * (1 - friction * Time.fixedDeltaTime), rigidBody.velocity.y);
         }
-        
-
     }
 
-
-    
     protected void Jump()
     {
         rigidBody.velocity = new Vector2(rigidBody.velocity.x, jumpForce);
     }
 
-
     protected bool IsGrounded()
     {
-        Vector2 groundCheckPosition = new Vector2(transform.position.x, transform.position.y - boxCollider.bounds.extents.y - checkRadiusOffset);
-        float checkRadius = 0.05f;
-        return Physics2D.OverlapCircle(groundCheckPosition, checkRadius, groundLayer);
+        return groundCheck.inGround;
     }
 
-    // This function is unfinished, it doesn't really do anything yet
     protected bool IsAgainstWallSide()
     {
-        Vector2 wallCheckPosition = new Vector2(transform.position.x - boxCollider.bounds.extents.x - checkRadiusOffset, transform.position.y);
-        float checkRadius = 0.05f;
-        return Physics2D.OverlapCircle(wallCheckPosition, checkRadius, wallLayer); 
+        return wallCheck.inWall;
     }
 }
