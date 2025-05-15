@@ -6,28 +6,32 @@ public class GroundCheck : MonoBehaviour
 {
 
     [SerializeField] protected BoxCollider2D boxCollider2D;
-    public bool inGround;
+    public bool inGround = false;
+    public float timeSinceGrounded = -Mathf.Infinity;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        boxCollider2D = GetComponent<BoxCollider2D>();
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        
+        if (!inGround)
+        {
+            timeSinceGrounded += Time.deltaTime;
+        }
+        else
+        {
+            timeSinceGrounded = 0f; // Reset when grounded
+        }
     }
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        this.inGround = true;
+        //if(other.tag == "Ground") {
+            this.inGround = true;
+            //}    
     } 
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        //if(collider.)
-        this.inGround = false;
+        //if(other.tag == "Ground") {
+            this.inGround = false;
+            //}    
     }
 }

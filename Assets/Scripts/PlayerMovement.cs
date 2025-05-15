@@ -1,7 +1,6 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class PlayerMovement : MonoBehaviour
 {
 
@@ -18,17 +17,24 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] protected float checkRadiusOffset = 0.1f; // Offset below the collider
 
     [Header("Movement")]
-    [SerializeField] protected float moveSpeed;
+    [SerializeField] protected float acceleration = 2f;
+    [SerializeField] protected float maxSpeed = 2f;
     [SerializeField] protected float friction;
-
     [SerializeField] protected float slideSpeed = 0.1f;
+    [SerializeField] float movementCooldownAfterWallJump = 0.1f;
+
+    
 
     [Header("Jump")]
     [SerializeField] protected float jumpForce = 5f;
+    [SerializeField] protected float wallJumpForce = 5f;
     [SerializeField] protected float jumpCooldown = 0.5f;
+    [SerializeField] protected float coyoteTime = 0.05f;
 
 
     private float lastJumpTime = -Mathf.Infinity;
+    private float lastWallJumpTime = -Mathf.Infinity;
+    
     public static PlayerMovement Instance;
 
     void Awake()
@@ -50,12 +56,38 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Time.timeScale == 1f)
         {
-            if (IsGrounded() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown)
+            if ((groundCheck.timeSinceGrounded < coyoteTime) && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown)
             {
-                Jump();
+                Jump(new Vector2(0, 1), jumpForce);
                 lastJumpTime = Time.time;
             }
+
+            if (IsAgainstWallSide() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown){
+                // Player sliding against all to the right
+                if(Input.GetAxis("Horizontal") > 0){
+                    ResetMovement();
+                    Jump(new Vector2(-1, 1).normalized, wallJumpForce);
+                    lastWallJumpTime = Time.time;
+                }
+
+                // Player sliding against all to the left
+                if(Input.GetAxis("Horizontal") < 0) {
+                    ResetMovement();
+                    Jump(new Vector2(1, 1).normalized, wallJumpForce);
+                    lastWallJumpTime = Time.time;
+                }
+            }
+
+            if (rigidBody.velocity.x > maxSpeed) {
+            rigidBody.velocity = new Vector2(maxSpeed, rigidBody.velocity.y);
+            }
+            if (rigidBody.velocity.x < -maxSpeed) {
+                rigidBody.velocity = new Vector2(-maxSpeed, rigidBody.velocity.y);
+            }
             
+            
+        } else {
+
         }
     }
 
@@ -63,11 +95,13 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 moveDirection = new Vector2(Input.GetAxis("Horizontal"), 0);
 
-        if(IsAgainstWallSide() && (moveDirection != new Vector2(0f,0f))){
+        if(IsAgainstWallSide()){
             SlideDownWall();
         }
 
-        Move(moveDirection);
+        if(Time.time > lastWallJumpTime + movementCooldownAfterWallJump){
+            Move(moveDirection);
+        }
 
     }
 
@@ -77,33 +111,30 @@ public class PlayerMovement : MonoBehaviour
 
     protected void Move(Vector2 moveDirection)
     {
-        
-        float targetVelocityX = moveDirection.x * moveSpeed;
-        float currentVelocityX = rigidBody.velocity.x;
 
-        float velocityChange = targetVelocityX - currentVelocityX;
-        float force = velocityChange / Time.fixedDeltaTime;
+        rigidBody.AddForce(Vector2.right * moveDirection * acceleration, ForceMode2D.Force);
 
-        rigidBody.AddForce(Vector2.right * force, ForceMode2D.Force);
-
-        if (Mathf.Abs(moveDirection.x) < 0.01f)
-        {
-            rigidBody.velocity = new Vector2(rigidBody.velocity.x * (1 - friction * Time.fixedDeltaTime), rigidBody.velocity.y);
-        }
     }
 
-    protected void Jump()
+    protected void ResetMovement() {
+        rigidBody.velocity = Vector2.zero;
+    }
+
+    protected void Jump(Vector2 direction, float force)
     {
-        rigidBody.velocity = new Vector2(rigidBody.velocity.x, jumpForce);
+        rigidBody.AddForce(direction * force, ForceMode2D.Impulse);
     }
 
-    protected bool IsGrounded()
-    {
-        return groundCheck.inGround;
-    }
 
     protected bool IsAgainstWallSide()
     {
         return wallCheck.inWall;
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.tag == "Death") {
+            
+        }  
+    } 
 }
