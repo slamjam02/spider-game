@@ -7,12 +7,15 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rigidBody;
     private Transform transform;
+    private Vector3 spawnPosition;
     private BoxCollider2D boxCollider;
 
 
     [Header("Check Objects")]
     [SerializeField] protected GroundCheck groundCheck;
-    [SerializeField] protected WallCheck wallCheck;
+    [SerializeField] protected WallCheck rightWallCheck;
+    [SerializeField] protected WallCheck leftWallCheck;
+    [SerializeField] protected WallCheck ceilingCheck;
 
     [Header("Layers")]
     [SerializeField] protected LayerMask wallLayer;
@@ -21,7 +24,10 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] protected float acceleration = 1000f;
-    [SerializeField] protected float maxSpeed = 2f;
+    [SerializeField] protected float walkingSpeed = 12f;
+    private float maxVertSpeedTemp;
+    [SerializeField] protected float maxHoriSpeed = 12f;
+    [SerializeField] protected float maxVertSpeed = 12f;
     [SerializeField] protected float frictionCompensation = 2f;
     [SerializeField] protected float slideSpeed = 0.1f;
     [SerializeField] float movementCooldownAfterWallJump = 0.1f;
@@ -40,6 +46,25 @@ public class PlayerMovement : MonoBehaviour
     
     public static PlayerMovement Instance;
 
+    public enum PlayerState {Idle, Run, Jump, Swing}
+    public PlayerState currentState;
+
+    private void OnEnterRunState() { 
+
+    }
+    private void UpdateRunState() { }
+    private void OnExitRunState() { }
+
+    private void OnEnterJumpState() { 
+        maxVertSpeedTemp = maxVertSpeed;
+        maxVertSpeed = Mathf.Infinity;
+
+    }
+    private void UpdateJumpState() { }
+    private void OnExitJumpState() { 
+        maxVertSpeed = maxVertSpeedTemp;
+    }
+
     void Awake()
     {
         if (Instance == null)
@@ -53,20 +78,33 @@ public class PlayerMovement : MonoBehaviour
         rigidBody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         transform = GetComponent<Transform>();
+        spawnPosition = transform.position;
 
-        rigidBody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        currentState = PlayerState.Idle;
     }
 
     void Update()
     {
         if (Time.timeScale == 1f)
         {
-
-            if (rigidBody.velocity.x > maxSpeed) {
-            rigidBody.velocity = new Vector2(maxSpeed, rigidBody.velocity.y);
+            if (Mathf.Abs(rigidBody.velocity.x) > 0.1f && groundCheck.inGround) {
+                currentState = PlayerState.Run;
             }
-            if (rigidBody.velocity.x < -maxSpeed) {
-                rigidBody.velocity = new Vector2(-maxSpeed, rigidBody.velocity.y);
+
+
+
+
+            if (rigidBody.velocity.x > maxHoriSpeed) {
+            rigidBody.velocity = new Vector2(maxHoriSpeed, rigidBody.velocity.y);
+            }
+            if (rigidBody.velocity.x < -maxHoriSpeed) {
+                rigidBody.velocity = new Vector2(-maxHoriSpeed, rigidBody.velocity.y);
+            }
+            if (rigidBody.velocity.y > maxVertSpeed) {
+            rigidBody.velocity = new Vector2(rigidBody.velocity.x, maxVertSpeed);
+            }
+            if (rigidBody.velocity.y < -maxVertSpeed) {
+                rigidBody.velocity = new Vector2(rigidBody.velocity.x, -maxVertSpeed);
             }
         
             if ((groundCheck.timeSinceGrounded < coyoteTime) && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown)
@@ -114,10 +152,6 @@ public class PlayerMovement : MonoBehaviour
             Move(moveDirection);
         }
 
-        
-
-        
-
     }
 
     protected void SlideDownWall() {
@@ -126,6 +160,17 @@ public class PlayerMovement : MonoBehaviour
 
     protected void Move(Vector2 moveDirection)
     {
+        // if(rigidBody.velocity.x > walkingSpeed){
+        //     if(moveDirection == Vector2.right){
+        //         return;
+        //     }
+        // }
+        // if(rigidBody.velocity.x < -walkingSpeed){
+        //     if(moveDirection == Vector2.left){
+        //         return;
+        //     }
+        // }
+
         if(groundCheck.inGround){
             // Compensate for friction
             rigidBody.AddForce(Vector2.up * frictionCompensation, ForceMode2D.Force);
@@ -133,10 +178,6 @@ public class PlayerMovement : MonoBehaviour
         } else {
             rigidBody.AddForce(Vector2.right * moveDirection * acceleration, ForceMode2D.Force);
         }
-
-        
-
-
     }
 
     protected void ResetMovement() 
@@ -147,18 +188,20 @@ public class PlayerMovement : MonoBehaviour
     protected void Jump(Vector2 direction, float force)
     {
         rigidBody.AddForce(direction * force, ForceMode2D.Impulse);
+        currentState = PlayerState.Jump;
     }
 
 
     protected bool IsAgainstWallSide()
     {
-        return wallCheck.inWall;
+        return rightWallCheck.check || leftWallCheck.check;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if(other.tag == "Death") {
-            
+            Debug.Log("Player hit death barrier");
+            transform.position = spawnPosition;
         }  
     } 
 }
