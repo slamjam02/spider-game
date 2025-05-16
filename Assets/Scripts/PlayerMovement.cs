@@ -74,8 +74,8 @@ public class PlayerMovement : MonoBehaviour
         if (Time.timeScale == 1f)
         {
 
-            inputDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).normalized;
-
+            inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+            
             if (OnCeiling() || OnWall())
             {
                 rigidBody.gravityScale = 0f;
@@ -171,38 +171,35 @@ public class PlayerMovement : MonoBehaviour
 
     protected void Move(Vector2 moveDirection)
     {
+            
+        // Ground or air movement
         if (OnGround() || Airborne())
         {
-            if (rigidBody.velocity.x > maxPlayerSpeed)
-            {
-                if (moveDirection.x < 0)
-                {
-                    rigidBody.AddForce(moveDirection * acceleration, ForceMode2D.Force);
-                }
-            }
-            else if (rigidBody.velocity.x < -maxPlayerSpeed)
-            {
-                if (moveDirection.x > 0)
-                {
-                    rigidBody.AddForce(moveDirection * acceleration, ForceMode2D.Force);
-                }
-            }
-            else
-            {
-                rigidBody.AddForce(Vector2.right * moveDirection * acceleration, ForceMode2D.Force);
-            }
+            Vector2 forceToAdd = Vector2.right * moveDirection.x * acceleration;
             
+            if ((rigidBody.velocity.x > maxPlayerSpeed && moveDirection.x < 0) ||
+                (rigidBody.velocity.x < -maxPlayerSpeed && moveDirection.x > 0) ||
+                Mathf.Abs(rigidBody.velocity.x) <= maxPlayerSpeed)
+            {
+                rigidBody.AddForce(forceToAdd, ForceMode2D.Force);
+            }
         }
+        
+        // Wall movement (only vertical)
         if (OnWall())
         {
-            rigidBody.MovePosition(new Vector2(rigidBody.position.x, rigidBody.position.y + (moveDirection.y * crawlingSpeed)));
-
+            rigidBody.velocity = new Vector2(0, moveDirection.y * crawlingSpeed);
+            return; // Avoid conflicting movement logic
         }
+
+        // Ceiling movement (horizontal and vertical)
         if (OnCeiling())
         {
-            rigidBody.MovePosition(new Vector2(rigidBody.position.x + (moveDirection.x * crawlingSpeed), rigidBody.position.y + (moveDirection.y * crawlingSpeed)));
-
+            rigidBody.velocity = new Vector2(moveDirection.x * crawlingSpeed, moveDirection.y * crawlingSpeed);
+            return;
         }
+
+        
     }
 
     protected void ResetMovement()

@@ -2189,7 +2189,7 @@ MonoBehaviour:
     m_Bits: 64
   checkRadiusOffset: 0.1
   acceleration: 200
-  crawlingSpeed: 0.2
+  crawlingSpeed: 7
   terminalVelocity: 40
   maxPlayerSpeed: 14
   frictionCompensation: 20
@@ -2197,8 +2197,8 @@ MonoBehaviour:
   jumpForce: 35
   wallJumpForce: 35
   ceilingJumpForce: 1
-  jumpCooldown: 0.1
-  coyoteTime: 0.15
+  jumpCooldown: 0.2
+  coyoteTime: 0.08
 --- !u!114 &1891414906
 MonoBehaviour:
   m_ObjectHideFlags: 0
