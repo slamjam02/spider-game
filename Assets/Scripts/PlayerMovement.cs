@@ -75,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
         {
 
             inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
-            
+
             if (OnCeiling() || OnWall())
             {
                 rigidBody.gravityScale = 0f;
@@ -94,8 +94,6 @@ public class PlayerMovement : MonoBehaviour
             {
                 rigidBody.velocity = new Vector2(-terminalVelocity, rigidBody.velocity.y);
             }
-
-
             if (rigidBody.velocity.y > terminalVelocity)
             {
                 rigidBody.velocity = new Vector2(rigidBody.velocity.x, terminalVelocity);
@@ -109,10 +107,9 @@ public class PlayerMovement : MonoBehaviour
             if (groundCheck.canJump() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown)
                 {
                     Jump(new Vector2(0, 1), jumpForce);
-                    lastJumpTime = Time.time;
                 }
 
-            if ((leftWallCheck.canJump() || rightWallCheck.canJump()) && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown)
+            else if ((leftWallCheck.canJump() || rightWallCheck.canJump()) && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown)
             {
                 
                 // Player sliding against all to the right
@@ -120,13 +117,11 @@ public class PlayerMovement : MonoBehaviour
                 {
                     if (inputDirection == Vector2.down || inputDirection == Vector2.up)
                     {
-                        //ResetMovement();
-                        Jump(inputDirection, jumpForce * 0.5f);
+                        Jump(new Vector2(-0.2f, inputDirection.y).normalized, jumpForce * 0.5f);
                         lastWallJumpTime = Time.time;
                     }
                     else
                     {
-                        //ResetMovement();
                         Jump(new Vector2(-1f, 2f).normalized, wallJumpForce);
                         lastWallJumpTime = Time.time;
                     }
@@ -137,20 +132,18 @@ public class PlayerMovement : MonoBehaviour
                 {
                     if (inputDirection == Vector2.down || inputDirection == Vector2.up)
                     {
-                        //ResetMovement();
-                        Jump(inputDirection, jumpForce * 0.5f);
+                        Jump(new Vector2(0.2f, inputDirection.y).normalized, jumpForce * 0.5f);
                         lastWallJumpTime = Time.time;
                     }
                     else
                     {
-                        //ResetMovement();
                         Jump(new Vector2(1f, 2f).normalized, wallJumpForce);
                         lastWallJumpTime = Time.time;
                     }
                 }
             }
 
-            if (ceilingCheck.canJump() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown)
+            else if (ceilingCheck.canJump() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown)
             {
                 //ResetMovement();
                 Jump(new Vector2(0, -1), ceilingJumpForce);
@@ -210,6 +203,7 @@ public class PlayerMovement : MonoBehaviour
     protected void Jump(Vector2 direction, float force)
     {
         rigidBody.AddForce(direction * force, ForceMode2D.Impulse);
+        lastJumpTime = Time.time;
     }
 
     protected bool Airborne()
