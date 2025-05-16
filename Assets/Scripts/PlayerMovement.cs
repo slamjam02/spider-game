@@ -8,6 +8,9 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rigidBody;
     private Transform transform;
     private BoxCollider2D boxCollider;
+
+
+    [Header("Check Objects")]
     [SerializeField] protected GroundCheck groundCheck;
     [SerializeField] protected WallCheck wallCheck;
 
@@ -17,9 +20,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] protected float checkRadiusOffset = 0.1f; // Offset below the collider
 
     [Header("Movement")]
-    [SerializeField] protected float acceleration = 2f;
+    [SerializeField] protected float acceleration = 1000f;
     [SerializeField] protected float maxSpeed = 2f;
-    [SerializeField] protected float friction;
+    [SerializeField] protected float frictionCompensation = 2f;
     [SerializeField] protected float slideSpeed = 0.1f;
     [SerializeField] float movementCooldownAfterWallJump = 0.1f;
 
@@ -50,12 +53,22 @@ public class PlayerMovement : MonoBehaviour
         rigidBody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         transform = GetComponent<Transform>();
+
+        rigidBody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
     }
 
     void Update()
     {
         if (Time.timeScale == 1f)
         {
+
+            if (rigidBody.velocity.x > maxSpeed) {
+            rigidBody.velocity = new Vector2(maxSpeed, rigidBody.velocity.y);
+            }
+            if (rigidBody.velocity.x < -maxSpeed) {
+                rigidBody.velocity = new Vector2(-maxSpeed, rigidBody.velocity.y);
+            }
+        
             if ((groundCheck.timeSinceGrounded < coyoteTime) && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown)
             {
                 Jump(new Vector2(0, 1), jumpForce);
@@ -78,12 +91,9 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
-            if (rigidBody.velocity.x > maxSpeed) {
-            rigidBody.velocity = new Vector2(maxSpeed, rigidBody.velocity.y);
-            }
-            if (rigidBody.velocity.x < -maxSpeed) {
-                rigidBody.velocity = new Vector2(-maxSpeed, rigidBody.velocity.y);
-            }
+            
+
+            
             
             
         } else {
@@ -93,15 +103,20 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector2 moveDirection = new Vector2(Input.GetAxis("Horizontal"), 0);
+        
 
         if(IsAgainstWallSide()){
             SlideDownWall();
         }
 
+        Vector2 moveDirection = new Vector2(Input.GetAxis("Horizontal"), 0);
         if(Time.time > lastWallJumpTime + movementCooldownAfterWallJump){
             Move(moveDirection);
         }
+
+        
+
+        
 
     }
 
@@ -111,12 +126,21 @@ public class PlayerMovement : MonoBehaviour
 
     protected void Move(Vector2 moveDirection)
     {
+        if(groundCheck.inGround){
+            // Compensate for friction
+            rigidBody.AddForce(Vector2.up * frictionCompensation, ForceMode2D.Force);
+            rigidBody.AddForce(Vector2.right * moveDirection * acceleration, ForceMode2D.Force);
+        } else {
+            rigidBody.AddForce(Vector2.right * moveDirection * acceleration, ForceMode2D.Force);
+        }
 
-        rigidBody.AddForce(Vector2.right * moveDirection * acceleration, ForceMode2D.Force);
+        
+
 
     }
 
-    protected void ResetMovement() {
+    protected void ResetMovement() 
+    {
         rigidBody.velocity = Vector2.zero;
     }
 

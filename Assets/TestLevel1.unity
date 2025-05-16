@@ -272,7 +272,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 692324648}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: b7f5d9212220a4388ad1ef66aa01b9ca, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -418,7 +418,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 1226726659}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: b7f5d9212220a4388ad1ef66aa01b9ca, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -883,9 +883,8 @@ GameObject:
   - component: {fileID: 1891414902}
   - component: {fileID: 1891414901}
   - component: {fileID: 1891414905}
-  - component: {fileID: 1891414907}
   - component: {fileID: 1891414906}
-  - component: {fileID: 1891414908}
+  - component: {fileID: 1891414907}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -910,7 +909,7 @@ Rigidbody2D:
   m_AngularDrag: 0
   m_GravityScale: 9
   m_Material: {fileID: 0}
-  m_Interpolate: 1
+  m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
@@ -1031,14 +1030,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   checkRadiusOffset: 0.1
-  acceleration: 300
-  maxSpeed: 11
-  frictionCompensation: 20
+  acceleration: 400
+  maxSpeed: 10
+  frictionCompensation: 0
   slideSpeed: 0.075
   movementCooldownAfterWallJump: 0.1
   jumpForce: 35
   wallJumpForce: 45
-  jumpCooldown: 0.1
+  jumpCooldown: 0.05
   coyoteTime: 0.1
 --- !u!114 &1891414906
 MonoBehaviour:
@@ -1047,7 +1046,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1891414900}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 50a44ee8d79dcb94f9bd48237264f3b4, type: 3}
   m_Name: 
@@ -1057,26 +1056,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   rope: {fileID: 1743136197}
---- !u!232 &1891414907
-DistanceJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1891414900}
-  m_Enabled: 0
-  serializedVersion: 4
-  m_EnableCollision: 1
-  m_ConnectedRigidBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: 0}
-  m_ConnectedAnchor: {x: 0, y: 0}
-  m_AutoConfigureDistance: 0
-  m_Distance: 9.971203
-  m_MaxDistanceOnly: 0
---- !u!231 &1891414908
+--- !u!231 &1891414907
 SpringJoint2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1085,7 +1065,7 @@ SpringJoint2D:
   m_GameObject: {fileID: 1891414900}
   m_Enabled: 0
   serializedVersion: 4
-  m_EnableCollision: 0
+  m_EnableCollision: 1
   m_ConnectedRigidBody: {fileID: 0}
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
@@ -1317,7 +1297,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 1990569942}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: b7f5d9212220a4388ad1ef66aa01b9ca, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -1361,7 +1341,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 2021766750}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: b7f5d9212220a4388ad1ef66aa01b9ca, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
