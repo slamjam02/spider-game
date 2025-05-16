@@ -104,14 +104,16 @@ public class PlayerMovement : MonoBehaviour
             }
 
 
-            if (groundCheck.canJump() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown)
-                {
-                    Jump(new Vector2(0, 1), jumpForce);
-                }
+            if (ceilingCheck.canJump() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown)
+            {
+                //ResetMovement();
+                Jump(new Vector2(0, -1), ceilingJumpForce);
+                lastWallJumpTime = Time.time;
+            }
+
 
             else if ((leftWallCheck.canJump() || rightWallCheck.canJump()) && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown)
             {
-                
                 // Player sliding against all to the right
                 if (rightWallCheck.canJump())
                 {
@@ -143,11 +145,11 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
-            else if (ceilingCheck.canJump() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown)
+
+
+            else if (groundCheck.canJump() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown)
             {
-                //ResetMovement();
-                Jump(new Vector2(0, -1), ceilingJumpForce);
-                lastWallJumpTime = Time.time;
+                Jump(new Vector2(0, 1), jumpForce);
             }
 
         }
@@ -182,14 +184,12 @@ public class PlayerMovement : MonoBehaviour
         if (OnWall())
         {
             rigidBody.velocity = new Vector2(0, moveDirection.y * crawlingSpeed);
-            return; // Avoid conflicting movement logic
         }
 
         // Ceiling movement (horizontal and vertical)
         if (OnCeiling())
         {
             rigidBody.velocity = new Vector2(moveDirection.x * crawlingSpeed, moveDirection.y * crawlingSpeed);
-            return;
         }
 
         
