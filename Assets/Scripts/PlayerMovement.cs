@@ -32,38 +32,18 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] protected float slideSpeed = 0.1f;
     [SerializeField] float movementCooldownAfterWallJump = 0.1f;
 
-    
-
     [Header("Jump")]
     [SerializeField] protected float jumpForce = 5f;
     [SerializeField] protected float wallJumpForce = 5f;
+    [SerializeField] protected float ceilingJumpForce = 1f;
+
     [SerializeField] protected float jumpCooldown = 0.5f;
     [SerializeField] protected float coyoteTime = 0.05f;
 
-
     private float lastJumpTime = -Mathf.Infinity;
     private float lastWallJumpTime = -Mathf.Infinity;
-    
+    private float gravityScaleStorage = 0f;
     public static PlayerMovement Instance;
-
-    public enum PlayerState {Idle, Run, Jump, Swing}
-    public PlayerState currentState;
-
-    private void OnEnterRunState() { 
-
-    }
-    private void UpdateRunState() { }
-    private void OnExitRunState() { }
-
-    private void OnEnterJumpState() { 
-        maxVertSpeedTemp = maxVertSpeed;
-        maxVertSpeed = Mathf.Infinity;
-
-    }
-    private void UpdateJumpState() { }
-    private void OnExitJumpState() { 
-        maxVertSpeed = maxVertSpeedTemp;
-    }
 
     void Awake()
     {
@@ -80,107 +60,114 @@ public class PlayerMovement : MonoBehaviour
         transform = GetComponent<Transform>();
         spawnPosition = transform.position;
 
-        currentState = PlayerState.Idle;
+        gravityScaleStorage = rigidBody.gravityScale;
     }
 
     void Update()
     {
         if (Time.timeScale == 1f)
         {
-            if (Mathf.Abs(rigidBody.velocity.x) > 0.1f && groundCheck.inGround) {
-                currentState = PlayerState.Run;
+            if (OnCeiling() || OnWall())
+            {
+                rigidBody.gravityScale = 0f;
+            }
+            else
+            {
+                rigidBody.gravityScale = gravityScaleStorage;
             }
 
-
-
-
-            if (rigidBody.velocity.x > maxHoriSpeed) {
-            rigidBody.velocity = new Vector2(maxHoriSpeed, rigidBody.velocity.y);
+            // Speed checks
+            if (rigidBody.velocity.x > maxHoriSpeed)
+            {
+                rigidBody.velocity = new Vector2(maxHoriSpeed, rigidBody.velocity.y);
             }
-            if (rigidBody.velocity.x < -maxHoriSpeed) {
+            if (rigidBody.velocity.x < -maxHoriSpeed)
+            {
                 rigidBody.velocity = new Vector2(-maxHoriSpeed, rigidBody.velocity.y);
             }
-            if (rigidBody.velocity.y > maxVertSpeed) {
-            rigidBody.velocity = new Vector2(rigidBody.velocity.x, maxVertSpeed);
+            if (rigidBody.velocity.y > maxVertSpeed)
+            {
+                rigidBody.velocity = new Vector2(rigidBody.velocity.x, maxVertSpeed);
             }
-            if (rigidBody.velocity.y < -maxVertSpeed) {
+            if (rigidBody.velocity.y < -maxVertSpeed)
+            {
                 rigidBody.velocity = new Vector2(rigidBody.velocity.x, -maxVertSpeed);
             }
-        
+
             if ((groundCheck.timeSinceGrounded < coyoteTime) && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown)
             {
                 Jump(new Vector2(0, 1), jumpForce);
                 lastJumpTime = Time.time;
             }
 
-            if (IsAgainstWallSide() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown){
+            if (OnWall() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown)
+            {
                 // Player sliding against all to the right
-                if(Input.GetAxis("Horizontal") > 0){
+                if (rightWallCheck.check)
+                {
                     ResetMovement();
                     Jump(new Vector2(-1, 1).normalized, wallJumpForce);
                     lastWallJumpTime = Time.time;
                 }
 
                 // Player sliding against all to the left
-                if(Input.GetAxis("Horizontal") < 0) {
+                if (leftWallCheck.check)
+                {
                     ResetMovement();
                     Jump(new Vector2(1, 1).normalized, wallJumpForce);
                     lastWallJumpTime = Time.time;
                 }
             }
 
-            
-
-            
-            
-            
-        } else {
+            if (OnCeiling() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown)
+            {
+                ResetMovement();
+                Jump(new Vector2(0, -1), ceilingJumpForce);
+            }
 
         }
     }
 
     void FixedUpdate()
     {
-        
 
-        if(IsAgainstWallSide()){
-            SlideDownWall();
-        }
 
-        Vector2 moveDirection = new Vector2(Input.GetAxis("Horizontal"), 0);
-        if(Time.time > lastWallJumpTime + movementCooldownAfterWallJump){
+        // if (OnWall())
+        // {
+        //     SlideDownWall();
+        // }
+
+        Vector2 moveDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).normalized;
+        if (Time.time > lastWallJumpTime + movementCooldownAfterWallJump)
+        {
             Move(moveDirection);
         }
 
     }
 
-    protected void SlideDownWall() {
-        transform.Translate(0f,-slideSpeed,0f);
+    protected void SlideDownWall()
+    {
+        transform.Translate(0f, -slideSpeed, 0f);
     }
 
     protected void Move(Vector2 moveDirection)
     {
-        // if(rigidBody.velocity.x > walkingSpeed){
-        //     if(moveDirection == Vector2.right){
-        //         return;
-        //     }
-        // }
-        // if(rigidBody.velocity.x < -walkingSpeed){
-        //     if(moveDirection == Vector2.left){
-        //         return;
-        //     }
-        // }
-
-        if(groundCheck.inGround){
-            // Compensate for friction
-            rigidBody.AddForce(Vector2.up * frictionCompensation, ForceMode2D.Force);
+        if (OnGround())
+        {
+            //rigidBody.AddForce(Vector2.up * frictionCompensation, ForceMode2D.Force);    // Compensate for friction
             rigidBody.AddForce(Vector2.right * moveDirection * acceleration, ForceMode2D.Force);
-        } else {
+        }
+        else if (OnWall() || OnCeiling())
+        {
+            rigidBody.MovePosition(new Vector2(rigidBody.position.x + (moveDirection.x * walkingSpeed), rigidBody.position.y + (moveDirection.y * walkingSpeed)));
+        }
+        else
+        {
             rigidBody.AddForce(Vector2.right * moveDirection * acceleration, ForceMode2D.Force);
         }
     }
 
-    protected void ResetMovement() 
+    protected void ResetMovement()
     {
         rigidBody.velocity = Vector2.zero;
     }
@@ -188,20 +175,28 @@ public class PlayerMovement : MonoBehaviour
     protected void Jump(Vector2 direction, float force)
     {
         rigidBody.AddForce(direction * force, ForceMode2D.Impulse);
-        currentState = PlayerState.Jump;
     }
 
+    protected bool OnGround()
+    {
+        return groundCheck.check;
+    }
 
-    protected bool IsAgainstWallSide()
+    protected bool OnWall()
     {
         return rightWallCheck.check || leftWallCheck.check;
+    }
+    protected bool OnCeiling()
+    {
+        return ceilingCheck.check;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "Death") {
+        if (other.tag == "Death")
+        {
             Debug.Log("Player hit death barrier");
             transform.position = spawnPosition;
-        }  
-    } 
+        }
+    }
 }

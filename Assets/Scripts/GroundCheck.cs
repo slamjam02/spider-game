@@ -6,12 +6,14 @@ public class GroundCheck : MonoBehaviour
 {
 
     [SerializeField] protected BoxCollider2D boxCollider2D;
-    public bool inGround = false;
+    public bool check = false;
     public float timeSinceGrounded = -Mathf.Infinity;
+
+    public float coyoteTime = 0f;
 
     void Update()
     {
-        if (!inGround)
+        if (!check)
         {
             timeSinceGrounded += Time.deltaTime;
         }
@@ -23,15 +25,11 @@ public class GroundCheck : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        //if(other.tag == "Ground") {
-            this.inGround = true;
-            //}    
+        this.check = true;
     } 
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        //if(other.tag == "Ground") {
-            this.inGround = false;
-            //}    
+        this.check = false;
     }
 }
