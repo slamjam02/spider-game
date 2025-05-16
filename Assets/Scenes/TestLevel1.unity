@@ -2188,14 +2188,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   checkRadiusOffset: 0.1
-  acceleration: 300
+  acceleration: 200
   crawlingSpeed: 0.2
   terminalVelocity: 40
-  maxPlayerSpeed: 12
+  maxPlayerSpeed: 14
   frictionCompensation: 20
   movementCooldownAfterWallJump: 0.1
   jumpForce: 35
-  wallJumpForce: 30
+  wallJumpForce: 35
   ceilingJumpForce: 1
   jumpCooldown: 0.1
   coyoteTime: 0.15

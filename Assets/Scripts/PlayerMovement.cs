@@ -108,7 +108,6 @@ public class PlayerMovement : MonoBehaviour
 
             if (groundCheck.canJump() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown)
                 {
-                    //ResetMovement();
                     Jump(new Vector2(0, 1), jumpForce);
                     lastJumpTime = Time.time;
                 }
@@ -121,14 +120,14 @@ public class PlayerMovement : MonoBehaviour
                 {
                     if (inputDirection == Vector2.down || inputDirection == Vector2.up)
                     {
-                        ResetMovement();
+                        //ResetMovement();
                         Jump(inputDirection, jumpForce * 0.5f);
                         lastWallJumpTime = Time.time;
                     }
                     else
                     {
-                        ResetMovement();
-                        Jump(new Vector2(-1f, 1.5f).normalized, wallJumpForce);
+                        //ResetMovement();
+                        Jump(new Vector2(-1f, 2f).normalized, wallJumpForce);
                         lastWallJumpTime = Time.time;
                     }
                 }
@@ -138,14 +137,14 @@ public class PlayerMovement : MonoBehaviour
                 {
                     if (inputDirection == Vector2.down || inputDirection == Vector2.up)
                     {
-                        ResetMovement();
+                        //ResetMovement();
                         Jump(inputDirection, jumpForce * 0.5f);
                         lastWallJumpTime = Time.time;
                     }
                     else
                     {
-                        ResetMovement();
-                        Jump(new Vector2(1f, 1.5f).normalized, wallJumpForce);
+                        //ResetMovement();
+                        Jump(new Vector2(1f, 2f).normalized, wallJumpForce);
                         lastWallJumpTime = Time.time;
                     }
                 }
@@ -161,10 +160,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // protected void Flip(Vector2 moveDirection) {
-    //     if (isFacingRight && )
-    // }
-
     void FixedUpdate()
     {
         if (Time.time > lastWallJumpTime + movementCooldownAfterWallJump)
@@ -174,24 +169,22 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-
-
     protected void Move(Vector2 moveDirection)
     {
         if (OnGround() || Airborne())
         {
             if (rigidBody.velocity.x > maxPlayerSpeed)
             {
-                if (moveDirection == Vector2.left)
+                if (moveDirection.x < 0)
                 {
-                    rigidBody.AddForce(Vector2.right * moveDirection * acceleration, ForceMode2D.Force);
+                    rigidBody.AddForce(moveDirection * acceleration, ForceMode2D.Force);
                 }
             }
             else if (rigidBody.velocity.x < -maxPlayerSpeed)
             {
-                if (moveDirection == Vector2.right)
+                if (moveDirection.x > 0)
                 {
-                    rigidBody.AddForce(Vector2.right * moveDirection * acceleration, ForceMode2D.Force);
+                    rigidBody.AddForce(moveDirection * acceleration, ForceMode2D.Force);
                 }
             }
             else
