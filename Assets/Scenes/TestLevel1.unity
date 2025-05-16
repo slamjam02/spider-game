@@ -986,6 +986,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boxCollider2D: {fileID: 0}
   check: 0
+  timeSinceGrounded: -Infinity
+  coyoteTime: 0
 --- !u!61 &1262235179
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1019,7 +1021,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1262235177}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -1445,6 +1447,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boxCollider2D: {fileID: 0}
   check: 0
+  timeSinceGrounded: -Infinity
+  coyoteTime: 0
 --- !u!61 &1578325498
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1478,7 +1482,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1578325496}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -1682,6 +1686,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boxCollider2D: {fileID: 0}
   check: 0
+  timeSinceGrounded: -Infinity
+  coyoteTime: 0
 --- !u!61 &1614526455
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1715,7 +1721,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1614526453}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -1768,8 +1774,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1614526453}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0022, y: 0.5, z: 0}
-  m_LocalScale: {x: 0.9677551, y: 0.28738418, z: 1}
+  m_LocalPosition: {x: -0.0022, y: 0.4408, z: 0}
+  m_LocalScale: {x: 0.9677551, y: 0.16891658, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1891414904}
@@ -2193,7 +2199,7 @@ MonoBehaviour:
   wallJumpForce: 45
   ceilingJumpForce: 1
   jumpCooldown: 0.1
-  coyoteTime: 0.1
+  coyoteTime: 0.15
 --- !u!114 &1891414906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2318,7 +2324,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1936980698}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -2371,8 +2377,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1936980698}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0004, y: -0.5186, z: 0}
-  m_LocalScale: {x: 0.97717446, y: 0.18820791, z: 1}
+  m_LocalPosition: {x: -0.0004, y: -0.6296, z: 0}
+  m_LocalScale: {x: 0.97717446, y: 0.41027442, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1891414904}

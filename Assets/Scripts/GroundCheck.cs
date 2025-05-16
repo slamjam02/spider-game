@@ -11,22 +11,29 @@ public class GroundCheck : MonoBehaviour
 
     public float coyoteTime = 0f;
 
-    void Update()
+    public bool canJump()
+    {
+        return timeSinceGrounded < coyoteTime;
+    }
+
+    void Start()
+    {
+        timeSinceGrounded = coyoteTime;
+    }
+
+    void FixedUpdate()
     {
         if (!check)
-        {
-            timeSinceGrounded += Time.deltaTime;
-        }
+            timeSinceGrounded += Time.fixedDeltaTime;
         else
-        {
-            timeSinceGrounded = 0f; // Reset when grounded
-        }
+            timeSinceGrounded = 0f;
     }
+
 
     private void OnTriggerStay2D(Collider2D other)
     {
         this.check = true;
-    } 
+    }
 
     private void OnTriggerExit2D(Collider2D other)
     {

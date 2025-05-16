@@ -61,6 +61,11 @@ public class PlayerMovement : MonoBehaviour
         spawnPosition = transform.position;
 
         gravityScaleStorage = rigidBody.gravityScale;
+
+        groundCheck.coyoteTime = coyoteTime;
+        rightWallCheck.coyoteTime = coyoteTime;
+        leftWallCheck.coyoteTime = coyoteTime;
+        ceilingCheck.coyoteTime = coyoteTime;
     }
 
     void Update()
@@ -94,16 +99,17 @@ public class PlayerMovement : MonoBehaviour
                 rigidBody.velocity = new Vector2(rigidBody.velocity.x, -maxVertSpeed);
             }
 
-            if ((groundCheck.timeSinceGrounded < coyoteTime) && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown)
+            if (groundCheck.canJump() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastJumpTime + jumpCooldown)
             {
+                //ResetMovement();
                 Jump(new Vector2(0, 1), jumpForce);
                 lastJumpTime = Time.time;
             }
 
-            if (OnWall() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown)
+            if ((leftWallCheck.canJump() || rightWallCheck.canJump()) && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown)
             {
                 // Player sliding against all to the right
-                if (rightWallCheck.check)
+                if (rightWallCheck.canJump())
                 {
                     ResetMovement();
                     Jump(new Vector2(-1, 1).normalized, wallJumpForce);
@@ -111,7 +117,7 @@ public class PlayerMovement : MonoBehaviour
                 }
 
                 // Player sliding against all to the left
-                if (leftWallCheck.check)
+                if (leftWallCheck.canJump())
                 {
                     ResetMovement();
                     Jump(new Vector2(1, 1).normalized, wallJumpForce);
@@ -119,10 +125,11 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
-            if (OnCeiling() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown)
+            if (ceilingCheck.canJump() && Input.GetKeyDown(KeyCode.Space) && Time.time > lastWallJumpTime + jumpCooldown)
             {
-                ResetMovement();
+                //ResetMovement();
                 Jump(new Vector2(0, -1), ceilingJumpForce);
+                lastWallJumpTime = Time.time;
             }
 
         }
@@ -157,11 +164,11 @@ public class PlayerMovement : MonoBehaviour
             //rigidBody.AddForce(Vector2.up * frictionCompensation, ForceMode2D.Force);    // Compensate for friction
             rigidBody.AddForce(Vector2.right * moveDirection * acceleration, ForceMode2D.Force);
         }
-        else if (OnWall() || OnCeiling())
+        if (OnWall() || OnCeiling())
         {
             rigidBody.MovePosition(new Vector2(rigidBody.position.x + (moveDirection.x * walkingSpeed), rigidBody.position.y + (moveDirection.y * walkingSpeed)));
         }
-        else
+        if (Airborne())
         {
             rigidBody.AddForce(Vector2.right * moveDirection * acceleration, ForceMode2D.Force);
         }
@@ -175,6 +182,11 @@ public class PlayerMovement : MonoBehaviour
     protected void Jump(Vector2 direction, float force)
     {
         rigidBody.AddForce(direction * force, ForceMode2D.Impulse);
+    }
+
+    protected bool Airborne()
+    {
+        return !(OnWall() || OnCeiling() || OnGround());
     }
 
     protected bool OnGround()
