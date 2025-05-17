@@ -206,21 +206,21 @@ public class PlayerMovement : MonoBehaviour
         lastJumpTime = Time.time;
     }
 
-    protected bool Airborne()
+    public bool Airborne()
     {
         return !(OnWall() || OnCeiling() || OnGround());
     }
 
-    protected bool OnGround()
+    public bool OnGround()
     {
         return groundCheck.check;
     }
 
-    protected bool OnWall()
+    public bool OnWall()
     {
         return rightWallCheck.check || leftWallCheck.check;
     }
-    protected bool OnCeiling()
+    public bool OnCeiling()
     {
         return ceilingCheck.check;
     }
