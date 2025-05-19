@@ -12,10 +12,10 @@ public class PlayerMovement : MonoBehaviour
 
 
     [Header("Check Objects")]
-    [SerializeField] protected GroundCheck groundCheck;
-    [SerializeField] protected WallCheck rightWallCheck;
-    [SerializeField] protected WallCheck leftWallCheck;
-    [SerializeField] protected WallCheck ceilingCheck;
+    [SerializeField] public GroundCheck groundCheck;
+    [SerializeField] public WallCheck rightWallCheck;
+    [SerializeField] public WallCheck leftWallCheck;
+    [SerializeField] public WallCheck ceilingCheck;
 
     [Header("Layers")]
     [SerializeField] protected LayerMask wallLayer;
@@ -38,7 +38,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] protected float jumpCooldown = 0.5f;
     [SerializeField] protected float coyoteTime = 0.05f;
 
-
+    public bool facingLeft;
+    public bool facingUp;
+    public bool isWalking;
     private float lastJumpTime = -Mathf.Infinity;
     private float lastWallJumpTime = -Mathf.Infinity;
     protected Vector2 inputDirection;
@@ -67,14 +69,45 @@ public class PlayerMovement : MonoBehaviour
         rightWallCheck.coyoteTime = coyoteTime;
         leftWallCheck.coyoteTime = coyoteTime;
         ceilingCheck.coyoteTime = coyoteTime;
+
+        facingLeft = false;
+        facingUp = true;
+        isWalking = false;
     }
 
     void Update()
     {
-        if (Time.timeScale == 1f)
+        if (Time.timeScale > 0f)
         {
 
             inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+
+            if (rigidBody.velocity.x > 0 || rigidBody.velocity.y > 0)
+            {
+                isWalking = true;
+            }
+            else
+            {
+                isWalking = false;
+            }
+
+            if (inputDirection.x > 0)
+            {
+                facingLeft = false;
+            }
+            if (inputDirection.x < 0)
+            {
+                facingLeft = true;
+            }
+            if (inputDirection.y > 0)
+            {
+                facingUp = true;
+            }
+            if (inputDirection.y < 0)
+            {
+                facingUp = false;
+            }
+
 
             if (OnCeiling() || OnWall())
             {
