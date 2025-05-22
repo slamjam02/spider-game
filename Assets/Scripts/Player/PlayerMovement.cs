@@ -41,6 +41,8 @@ public class PlayerMovement : MonoBehaviour
     public bool facingLeft;
     public bool facingUp;
     public bool isWalking;
+
+    public Collider2D attachedMovingObject;
     private float lastJumpTime = -Mathf.Infinity;
     private float lastWallJumpTime = -Mathf.Infinity;
     protected Vector2 inputDirection;
@@ -82,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
 
             inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
-            if (rigidBody.velocity.x > 0 || rigidBody.velocity.y > 0)
+            if ((rigidBody.velocity.x != 0f || rigidBody.velocity.y != 0f) && !Airborne())
             {
                 isWalking = true;
             }
@@ -194,6 +196,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Move(inputDirection);
         }
+        checkOnMovingObject();
 
     }
 
@@ -226,6 +229,42 @@ public class PlayerMovement : MonoBehaviour
         }
 
         
+    }
+
+    protected void checkOnMovingObject()
+    {
+        if (groundCheck.onMovingPlatform)
+        {
+            attachedMovingObject = groundCheck.attached;
+        }
+        else if (leftWallCheck.onMovingPlatform)
+        {
+            attachedMovingObject = leftWallCheck.attached;
+
+        }
+        else if (rightWallCheck.onMovingPlatform)
+        {
+            attachedMovingObject = rightWallCheck.attached;
+
+        }
+        else if (ceilingCheck.onMovingPlatform)
+        {
+            attachedMovingObject = ceilingCheck.attached;
+
+        }
+        else
+        {
+            attachedMovingObject = null;
+        }
+
+        if (attachedMovingObject != null)
+        {
+            this.transform.SetParent(attachedMovingObject.transform);
+        }
+        else
+        {
+            this.transform.SetParent(null);
+        }
     }
 
     protected void ResetMovement()

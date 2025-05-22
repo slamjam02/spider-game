@@ -5,19 +5,64 @@ using UnityEngine;
 public class PlayerSpriteController : MonoBehaviour
 {
     [SerializeField] protected PlayerMovement playerMovement;
+    [SerializeField] protected Animator animator;
     private Transform transform;
+
 
     private bool lastFrameOnWall;
     void Start()
     {
         transform = GetComponent<Transform>();
         lastFrameOnWall = false;
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        AdjustFaceAndRotation();
+        AdjustAnchorPosition();
+        ControlSprite();
+    }
 
+    void ControlSprite()
+    {
+        if (playerMovement.isWalking)
+        {
+            animator.SetBool("isWalking", true);
+        }
+        else
+        {
+            animator.SetBool("isWalking", false);
+        }
+    }
+
+    void AdjustAnchorPosition()
+    {
+        Vector3 localPos = Vector3.zero;
+        float offset = 0.25f; // Adjust this based on sprite size
+
+        if (playerMovement.OnCeiling())
+        {
+            localPos.y = -offset;
+        }
+        else if (playerMovement.leftWallCheck.check)
+        {
+            localPos.x = offset;
+        }
+        else if (playerMovement.rightWallCheck.check)
+        {
+            localPos.x = -offset;
+        }
+        else
+        {
+            localPos.y = offset; // standing upright
+        }
+
+        transform.localPosition = localPos;
+    }
+    void AdjustFaceAndRotation()
+    {
         Vector3 scale = transform.localScale;
 
         if (playerMovement.OnCeiling() || playerMovement.Airborne() || playerMovement.OnGround())
@@ -87,8 +132,6 @@ public class PlayerSpriteController : MonoBehaviour
             // Default rotation when not on wall
             transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         }
-
-        
 
         transform.localScale = scale;
     }
