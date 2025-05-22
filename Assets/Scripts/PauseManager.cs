@@ -22,7 +22,7 @@ public class PauseManager : MonoBehaviour
         pauseMenuUI.SetActive(false);
         Time.timeScale = 1f;
         isPaused = false;
-        BroadcastMessage("RESUME");
+        //BroadcastMessage("RESUME");
     }
 
     public void Pause()
@@ -30,7 +30,7 @@ public class PauseManager : MonoBehaviour
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
         isPaused = true;
-        BroadcastMessage("PAUSE");
+        //BroadcastMessage("PAUSE");
     }
 
     public void QuitToMainMenu()

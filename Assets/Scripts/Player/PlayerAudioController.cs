@@ -4,29 +4,51 @@ using UnityEngine;
 
 public class PlayerAudioController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField] private PlayerMovement playerMovement;
+    [SerializeField] private AudioClip walkClip;
+    [SerializeField] private AudioClip jumpClip;
 
-    [SerializeField] protected AudioSource audioSource;
-    [SerializeField] protected PlayerMovement playerMovement;
-    [SerializeField] protected AudioClip jumpClip, walkClip;
+    private AudioSource walkAudioSource;
+    private AudioSource sfxAudioSource;
+    private bool hasPlayedJumpSound = false;
+
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
-        audioSource.clip = walkClip;
-        audioSource.Pause();
+        // Create the walking AudioSource
+        walkAudioSource = gameObject.AddComponent<AudioSource>();
+        walkAudioSource.clip = walkClip;
+        walkAudioSource.loop = true;
+        walkAudioSource.playOnAwake = false;
+
+        // Create the SFX AudioSource for things like jump
+        sfxAudioSource = gameObject.AddComponent<AudioSource>();
+        sfxAudioSource.playOnAwake = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (true)
-        // if (playerMovement.isWalking && !(playerMovement.Airborne()))
+        // Walking loop
+        if (playerMovement.isWalking)
         {
-            audioSource.UnPause();
+            if (!walkAudioSource.isPlaying)
+                walkAudioSource.Play();
         }
         else
         {
-            audioSource.Pause();
+            if (walkAudioSource.isPlaying)
+                walkAudioSource.Stop();
+        }
+
+        // Jump SFX
+        if (playerMovement.hasJumped && !hasPlayedJumpSound)
+        {
+            sfxAudioSource.PlayOneShot(jumpClip);
+            hasPlayedJumpSound = true;
+            Debug.Log("Jump clip played");
+        }
+        else if (!playerMovement.hasJumped)
+        {
+            hasPlayedJumpSound = false;
         }
     }
 }

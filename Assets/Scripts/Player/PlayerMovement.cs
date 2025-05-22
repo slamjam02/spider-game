@@ -41,6 +41,7 @@ public class PlayerMovement : MonoBehaviour
     public bool facingLeft;
     public bool facingUp;
     public bool isWalking;
+    public bool hasJumped;
 
     public Collider2D attachedMovingObject;
     private float lastJumpTime = -Mathf.Infinity;
@@ -81,6 +82,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Time.timeScale > 0f)
         {
+            hasJumped = false;
 
             inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
@@ -143,6 +145,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 //ResetMovement();
                 Jump(new Vector2(0, -1), ceilingJumpForce);
+                
                 lastWallJumpTime = Time.time;
             }
 
@@ -276,6 +279,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rigidBody.AddForce(direction * force, ForceMode2D.Impulse);
         lastJumpTime = Time.time;
+        hasJumped = true;
     }
 
     public bool Airborne()
