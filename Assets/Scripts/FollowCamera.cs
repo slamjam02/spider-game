@@ -5,6 +5,7 @@ using UnityEngine;
 public class FollowCamera : MonoBehaviour
 {
     [SerializeField] protected GameObject followObject;
+    [SerializeField] protected PlayerMovement playerMovement;
     [SerializeField] protected float followRadius = 5f;
     [SerializeField] protected float smoothTime = 0.15f; // Adjust for the delay and smoothness
     [SerializeField] protected float maxSpeed = 100f;    // Limit the maximum camera speed

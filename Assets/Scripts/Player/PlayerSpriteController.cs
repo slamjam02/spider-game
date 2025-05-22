@@ -8,6 +8,8 @@ public class PlayerSpriteController : MonoBehaviour
     [SerializeField] protected Animator animator;
     private Transform transform;
 
+    private float offset;
+
 
     private bool lastFrameOnWall;
     void Start()
@@ -15,6 +17,9 @@ public class PlayerSpriteController : MonoBehaviour
         transform = GetComponent<Transform>();
         lastFrameOnWall = false;
         animator = GetComponent<Animator>();
+        
+        Vector3 localPos = Vector3.zero;
+        offset = localPos.y; // Adjust this based on sprite size
     }
 
     // Update is called once per frame
@@ -40,8 +45,7 @@ public class PlayerSpriteController : MonoBehaviour
     void AdjustAnchorPosition()
     {
         Vector3 localPos = Vector3.zero;
-        float offset = 0.25f; // Adjust this based on sprite size
-
+        
         if (playerMovement.OnCeiling())
         {
             localPos.y = -offset;

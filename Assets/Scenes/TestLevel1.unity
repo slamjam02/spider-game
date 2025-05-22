@@ -863,7 +863,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: -3, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -903,6 +903,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   followObject: {fileID: 1891414900}
+  playerMovement: {fileID: 0}
   followRadius: 5
   smoothTime: 0.15
   maxSpeed: 100
@@ -2176,6 +2177,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5090683320380467688, guid: 423d220739c94490fb81e33f056eff42, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5090683320380467689, guid: 423d220739c94490fb81e33f056eff42, type: 3}
+      propertyPath: crawlingSpeed
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5090683321517610774, guid: 423d220739c94490fb81e33f056eff42, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5090683321517610774, guid: 423d220739c94490fb81e33f056eff42, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5090683321517610774, guid: 423d220739c94490fb81e33f056eff42, type: 3}
+      propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5090683321517610775, guid: 423d220739c94490fb81e33f056eff42, type: 3}
