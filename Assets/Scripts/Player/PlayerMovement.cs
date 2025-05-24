@@ -103,14 +103,14 @@ public class PlayerMovement : MonoBehaviour
             {
                 facingLeft = true;
             }
-            if (inputDirection.y > 0)
-            {
-                facingUp = true;
-            }
-            if (inputDirection.y < 0)
-            {
-                facingUp = false;
-            }
+            // if (inputDirection.y > 0)
+            // {
+            //     facingUp = true;
+            // }
+            // if (inputDirection.y < 0)
+            // {
+            //     facingUp = false;
+            // }
 
 
             if (OnCeiling() || OnWall())
@@ -206,23 +206,47 @@ public class PlayerMovement : MonoBehaviour
     protected void Move(Vector2 moveDirection)
     {
             
-        // Ground or air movement
-        if (OnGround() || Airborne())
-        {
-            Vector2 forceToAdd = Vector2.right * moveDirection.x * acceleration;
-            
-            if ((rigidBody.velocity.x > maxPlayerSpeed && moveDirection.x < 0) ||
-                (rigidBody.velocity.x < -maxPlayerSpeed && moveDirection.x > 0) ||
-                Mathf.Abs(rigidBody.velocity.x) <= maxPlayerSpeed)
-            {
-                rigidBody.AddForce(forceToAdd, ForceMode2D.Force);
-            }
-        }
         
+
+        
+
         // Wall movement (only vertical)
         if (OnWall())
         {
-            rigidBody.velocity = new Vector2(0, moveDirection.y * crawlingSpeed);
+            float verticalInput = moveDirection.y;
+
+            // Allow horizontal direction to assist vertical wall movement
+            if (leftWallCheck.check)
+            {
+                if (moveDirection.x < 0 || moveDirection.y > 0) // left or up
+                {
+                    verticalInput = 1;
+                    facingUp = true;
+                }
+                else if (moveDirection.x > 0 || moveDirection.y < 0) // right or down
+                {
+                    verticalInput = -1;
+                    facingUp = false;
+                }
+            }
+            else // right wall
+            {
+                if (moveDirection.x > 0 || moveDirection.y > 0) // right or up
+                {
+                    verticalInput = 1;
+                    facingUp = true;
+                }
+                else if (moveDirection.x < 0 || moveDirection.y < 0) // left or down
+                {
+                    verticalInput = -1;
+                    facingUp = false;
+                }
+            }
+
+            if (facingUp || !OnGround())
+            {
+                rigidBody.velocity = new Vector2(0, verticalInput * crawlingSpeed);
+            }
         }
 
         // Ceiling movement (horizontal and vertical)
@@ -230,7 +254,19 @@ public class PlayerMovement : MonoBehaviour
         {
             rigidBody.velocity = new Vector2(moveDirection.x * crawlingSpeed, moveDirection.y * crawlingSpeed);
         }
+        
+        // Ground or air movement
+        if (OnGround() || Airborne())
+        {
+            Vector2 forceToAdd = Vector2.right * moveDirection.x * acceleration;
 
+            if ((rigidBody.velocity.x > maxPlayerSpeed && moveDirection.x < 0) ||
+                (rigidBody.velocity.x < -maxPlayerSpeed && moveDirection.x > 0) ||
+                Mathf.Abs(rigidBody.velocity.x) <= maxPlayerSpeed)
+            {
+                rigidBody.AddForce(forceToAdd, ForceMode2D.Force);
+            }
+        }
         
     }
 

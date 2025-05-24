@@ -104,37 +104,39 @@ public class PlayerSpriteController : MonoBehaviour
             lastFrameOnWall = false;
         }
 
-
-        if (playerMovement.leftWallCheck.check)
+        if (!playerMovement.OnCeiling())
         {
-            // Rotate to face left wall (example: 0, -90, 0)
-            transform.rotation = Quaternion.Euler(0f, 0f, -90f);
-            if (playerMovement.facingUp)
+            if (playerMovement.leftWallCheck.check)
             {
-                scale.x = -Mathf.Abs(scale.x);
+                // Rotate to face left wall (example: 0, -90, 0)
+                transform.rotation = Quaternion.Euler(0f, 0f, -90f);
+                if (playerMovement.facingUp)
+                {
+                    scale.x = -Mathf.Abs(scale.x);
+                }
+                else
+                {
+                    scale.x = Mathf.Abs(scale.x);
+                }
+            }
+            else if (playerMovement.rightWallCheck.check)
+            {
+                // Rotate to face right wall (example: 0, 90, 0)
+                transform.rotation = Quaternion.Euler(0f, 0f, 90f);
+                if (playerMovement.facingUp)
+                {
+                    scale.x = Mathf.Abs(scale.x);
+                }
+                else
+                {
+                    scale.x = -Mathf.Abs(scale.x);
+                }
             }
             else
             {
-                scale.x = Mathf.Abs(scale.x);
+                // Default rotation when not on wall
+                transform.rotation = Quaternion.Euler(0f, 0f, 0f);
             }
-        }
-        else if (playerMovement.rightWallCheck.check)
-        {
-            // Rotate to face right wall (example: 0, 90, 0)
-            transform.rotation = Quaternion.Euler(0f, 0f, 90f);
-            if (playerMovement.facingUp)
-            {
-                scale.x = Mathf.Abs(scale.x);
-            }
-            else
-            {
-                scale.x = -Mathf.Abs(scale.x);
-            }
-        }
-        else
-        {
-            // Default rotation when not on wall
-            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         }
 
         transform.localScale = scale;
