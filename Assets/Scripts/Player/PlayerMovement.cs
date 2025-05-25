@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rigidBody;
     private Transform transform;
     private Vector3 spawnPosition;
-
+    public Collider2D attachedMovingObject;
 
     [Header("Check Objects")]
     [SerializeField] public GroundCheck groundCheck;
@@ -19,14 +19,14 @@ public class PlayerMovement : MonoBehaviour
     [Header("Layers")]
     [SerializeField] protected LayerMask wallLayer;
     [SerializeField] protected LayerMask groundLayer;
-    [SerializeField] protected float checkRadiusOffset = 0.1f; // Offset below the collider
+    // [SerializeField] protected float checkRadiusOffset = 0.1f; // Offset below the collider
 
     [Header("Movement")]
     [SerializeField] protected float acceleration = 1000f;
+    [SerializeField] protected float maxPlayerSpeed = 12f;
     [SerializeField] protected float crawlingSpeed = 0.2f;
     private float maxVertSpeedTemp;
     [SerializeField] protected float terminalVelocity = 300f;
-    [SerializeField] protected float maxPlayerSpeed = 12f;
     [SerializeField] protected float frictionCompensation = 2f;
     [SerializeField] float movementCooldownAfterWallJump = 0.1f;
 
@@ -37,18 +37,16 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] protected float jumpCooldown = 0.5f;
     [SerializeField] protected float coyoteTime = 0.05f;
 
-    public bool facingLeft;
-    public bool facingUp;
-    public bool isWalking;
-    public bool hasJumped;
-
-    public Collider2D attachedMovingObject;
-    private float lastJumpTime = -Mathf.Infinity;
+        private float lastJumpTime = -Mathf.Infinity;
     private float lastWallJumpTime = -Mathf.Infinity;
 
     [Header("Current Stats")]
     [SerializeField] protected Vector2 inputDirection;
     [SerializeField] protected Vector2 currentVelocity;
+    public bool facingLeft;
+    public bool facingUp;
+    public bool isWalking;
+    public bool hasJumped;
 
     private float gravityScaleStorage = 0f;
     public static PlayerMovement Instance;
@@ -157,31 +155,52 @@ public class PlayerMovement : MonoBehaviour
                 // Player sliding against all to the right
                 if (rightWallCheck.canJump())
                 {
-                    if (inputDirection == Vector2.down || inputDirection == Vector2.up)
-                    {
-                        Jump(new Vector2(-0.2f, inputDirection.y).normalized, jumpForce * 0.5f);
-                        lastWallJumpTime = Time.time;
-                    }
-                    else
+                    if (inputDirection.x < 0)
                     {
                         Jump(new Vector2(-1f, 2f).normalized, wallJumpForce);
                         lastWallJumpTime = Time.time;
                     }
+                    else
+                    {
+                        Jump(new Vector2(-0.5f, 2f).normalized, wallJumpForce);
+                        lastWallJumpTime = Time.time;
+                    }
+
+                    // if (inputDirection == Vector2.down || inputDirection == Vector2.up)
+                    // {
+                    //     Jump(new Vector2(-0.2f, inputDirection.y).normalized, jumpForce * 0.5f);
+                    //     lastWallJumpTime = Time.time;
+                    // }
+                    // else
+                    // {
+                    //     Jump(new Vector2(-1f, 2f).normalized, wallJumpForce);
+                    //     lastWallJumpTime = Time.time;
+                    // }
                 }
 
                 // Player sliding against all to the left
                 if (leftWallCheck.canJump())
                 {
-                    if (inputDirection == Vector2.down || inputDirection == Vector2.up)
-                    {
-                        Jump(new Vector2(0.2f, inputDirection.y).normalized, jumpForce * 0.5f);
-                        lastWallJumpTime = Time.time;
-                    }
-                    else
+                    if (inputDirection.x > 0)
                     {
                         Jump(new Vector2(1f, 2f).normalized, wallJumpForce);
                         lastWallJumpTime = Time.time;
                     }
+                    else
+                    {
+                        Jump(new Vector2(0.5f, 2f).normalized, wallJumpForce);
+                        lastWallJumpTime = Time.time;
+                    }
+                    // if (inputDirection == Vector2.down || inputDirection == Vector2.up)
+                    // {
+                    //     Jump(new Vector2(0.2f, inputDirection.y).normalized, jumpForce * 0.5f);
+                    //     lastWallJumpTime = Time.time;
+                    // }
+                    // else
+                    // {
+                    //     Jump(new Vector2(1f, 2f).normalized, wallJumpForce);
+                    //     lastWallJumpTime = Time.time;
+                    // }
                 }
             }
 
@@ -199,8 +218,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Time.time > lastWallJumpTime + movementCooldownAfterWallJump)
         {
-            Debug.Log("Move direction: " + inputDirection);
-            Debug.Log("Facing up: " + facingUp);
             Move(inputDirection);
         }
         checkOnMovingObject();
@@ -341,7 +358,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.tag == "Death")
         {
-            Debug.Log("Player hit death barrier");
             transform.position = spawnPosition;
         }
     }
