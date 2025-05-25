@@ -8,7 +8,6 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rigidBody;
     private Transform transform;
     private Vector3 spawnPosition;
-    private BoxCollider2D boxCollider;
 
 
     [Header("Check Objects")]
@@ -46,7 +45,10 @@ public class PlayerMovement : MonoBehaviour
     public Collider2D attachedMovingObject;
     private float lastJumpTime = -Mathf.Infinity;
     private float lastWallJumpTime = -Mathf.Infinity;
-    protected Vector2 inputDirection;
+
+    [Header("Current Stats")]
+    [SerializeField] protected Vector2 inputDirection;
+    [SerializeField] protected Vector2 currentVelocity;
 
     private float gravityScaleStorage = 0f;
     public static PlayerMovement Instance;
@@ -62,7 +64,6 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rigidBody = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
         transform = GetComponent<Transform>();
         spawnPosition = transform.position;
 
@@ -85,6 +86,7 @@ public class PlayerMovement : MonoBehaviour
             hasJumped = false;
 
             inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+            currentVelocity = rigidBody.velocity;
 
             if ((rigidBody.velocity.x != 0f || rigidBody.velocity.y != 0f) && !Airborne())
             {
@@ -197,6 +199,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Time.time > lastWallJumpTime + movementCooldownAfterWallJump)
         {
+            Debug.Log("Move direction: " + inputDirection);
+            Debug.Log("Facing up: " + facingUp);
             Move(inputDirection);
         }
         checkOnMovingObject();
@@ -205,11 +209,7 @@ public class PlayerMovement : MonoBehaviour
 
     protected void Move(Vector2 moveDirection)
     {
-            
         
-
-        
-
         // Wall movement (only vertical)
         if (OnWall())
         {
