@@ -4,15 +4,22 @@ using UnityEngine;
 
 public class Mushroom : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public float bounce = 10f;
 
-    // Update is called once per frame
-    void Update()
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        
+        // Check if the object has the tag "Player"
+
+        Debug.Log("Collider Entered!");
+
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, bounce);
+            }
+        }
     }
 }
+
