@@ -5,25 +5,17 @@ using UnityEngine;
 public class Thorn : MonoBehaviour
 {
 
-    private BoxCollider2D boxCollider;
-
-    // Start is called before the first frame update
-    void Start()
+    void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("Collider Entered!");
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    public void onTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Player")
+        if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Object Entered");
+            Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+
+            }
         }
     }
 }

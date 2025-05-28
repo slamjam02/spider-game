@@ -8,8 +8,6 @@ public class Mushroom : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // Check if the object has the tag "Player"
-
         Debug.Log("Collider Entered!");
 
         if (collision.gameObject.CompareTag("Player"))
