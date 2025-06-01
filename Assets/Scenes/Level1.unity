@@ -340,6 +340,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8483646791396313676, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
+      propertyPath: bounce
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 8483646791396313679, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: m_RootOrder
       value: 10
@@ -407,7 +411,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8483646791396313676, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: bounce
-      value: 9000
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 8483646791396313679, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: m_RootOrder
@@ -517,6 +521,10 @@ PrefabInstance:
     - target: {fileID: 6957587769898384604, guid: d4e7465ac1591804aa764cf21acc0da6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6957587769898384607, guid: d4e7465ac1591804aa764cf21acc0da6, type: 3}
+      propertyPath: bounce
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 6957587769898384674, guid: d4e7465ac1591804aa764cf21acc0da6, type: 3}
       propertyPath: m_Name
@@ -656,7 +664,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8483646791396313676, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: bounce
-      value: 3000
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 8483646791396313679, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: m_RootOrder
@@ -765,7 +773,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6957587769898384607, guid: d4e7465ac1591804aa764cf21acc0da6, type: 3}
       propertyPath: bounce
-      value: 20000
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 6957587769898384674, guid: d4e7465ac1591804aa764cf21acc0da6, type: 3}
       propertyPath: m_Name
@@ -780,6 +788,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8483646791396313676, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
+      propertyPath: bounce
+      value: 80
+      objectReference: {fileID: 0}
     - target: {fileID: 8483646791396313679, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: m_RootOrder
       value: 11
@@ -847,7 +859,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8483646791396313676, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: bounce
-      value: 9000
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 8483646791396313679, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: m_RootOrder
@@ -986,6 +998,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8483646791396313676, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
+      propertyPath: bounce
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 8483646791396313679, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -1053,7 +1069,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8483646791396313676, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: bounce
-      value: 10000
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 8483646791396313679, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: m_RootOrder
@@ -1120,6 +1136,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8483646791396313676, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
+      propertyPath: bounce
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 8483646791396313679, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: m_RootOrder
       value: 8
@@ -91195,7 +91215,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8483646791396313676, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: bounce
-      value: 5000
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 8483646791396313679, guid: 77e868f53ebf0974196986d98acc4595, type: 3}
       propertyPath: m_RootOrder
