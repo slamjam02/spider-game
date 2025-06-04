@@ -9,17 +9,23 @@ public class BatEnemy : MonoBehaviour
     [SerializeField] protected GameObject playerObject;
     Vector2 targetPosition;
     private enum State { Roam, Chase, Charge, Attack };
-    [SerializeField] private float chaseDist, roamDist, attackDist, moveSpeed, friction;
+    [SerializeField] private float chaseDist, roamDist, attackDist, moveSpeed, friction, chargeTime, chargeVelocity;
     State currentState;
     public Animator animator;
     public Rigidbody2D rigidBody;
     public Transform transform;
+
+    [SerializeField] private float hitCooldown = 4f;
+    private float hitCooldownEnd, timeStorage;
+
+    private bool beganCharging;
 
     // Start is called before the first frame update
     void Start()
     {
         currentState = State.Roam;
         targetPosition = (Vector2)transform.position + new Vector2(Random.Range(-roamDist, roamDist), Random.Range(-roamDist, roamDist));
+        beganCharging = false;
     }
 
     // Update is called once per frame
@@ -42,24 +48,63 @@ public class BatEnemy : MonoBehaviour
                 currentState = State.Roam;
                 Debug.Log("Bat state is now roam");
             }
+            if (Distance(gameObject, playerObject) < attackDist)
+            {
+                currentState = State.Charge;
+                Debug.Log("Bat state is now charge");
+            }
 
             targetPosition = playerObject.transform.position;
 
         }
         else if (currentState == State.Attack)
         {
-            Time attackStartTime;
+            if (Time.time > hitCooldownEnd)
+            {
+                if (Distance(gameObject, playerObject) < attackDist)
+                {
+                    Debug.Log("Bat attacking");
+                    targetPosition = playerObject.transform.position;
+                }
+                else
+                {
+                    currentState = State.Roam;
+                }
+            }
+            else
+            {
+                // Reset beganCharging so next Charge starts fresh
+                beganCharging = false;
+                currentState = State.Charge;
+            }
         }
         else if (currentState == State.Charge)
         {
+            if (!beganCharging)
+            {
+                timeStorage = Time.time;
+                beganCharging = true;
+            }
 
+            if (Time.time < timeStorage + chargeTime)
+            {
+                Debug.Log("Bat charging...");
+                // Optional: Face the player or move toward a pre-charge direction
+                targetPosition = rigidBody.position + new Vector2(0f, 10f);
+            }
+            else
+            {
+                currentState = State.Attack;
+                beganCharging = false; // reset for next Charge
+            }
         }
 
         Move(targetPosition);
 
     }
 
-    protected float Distance(GameObject self, GameObject other) {
+    protected float Distance(GameObject self, GameObject other)
+    {
         Vector3 selfPos = self.transform.position;
         Vector3 otherPos = other.transform.position;
 
@@ -84,5 +129,20 @@ public class BatEnemy : MonoBehaviour
         {
             rigidBody.velocity *= (1 - friction);
         }
+    }
+
+    protected void Attack(Vector2 targetPos)
+    {
+        
+    }
+    
+    protected void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Player")
+        {
+            // Damage player
+            hitCooldownEnd = Time.time + hitCooldown;
+        }
+
     }
 }

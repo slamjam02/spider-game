@@ -535,13 +535,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerObject: {fileID: 1440415553}
   chaseDist: 8
-  roamDist: 11
-  attackDist: 0
-  moveSpeed: 1
+  roamDist: 10
+  attackDist: 4
+  moveSpeed: 3
   friction: 0
+  chargeTime: 2
+  chargeVelocity: 0
   animator: {fileID: 912960484}
   rigidBody: {fileID: 848139621}
   transform: {fileID: 848139619}
+  hitCooldown: 4
 --- !u!212 &848139618
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -620,7 +623,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -0.006868124, y: 0.03434038}
