@@ -4,145 +4,142 @@ using UnityEngine;
 
 public class BatEnemy : MonoBehaviour
 {
-
-    //public Vector2 moveDirection;
-    [SerializeField] protected GameObject playerObject;
-    Vector2 targetPosition;
     private enum State { Roam, Chase, Charge, Attack };
-    [SerializeField] private float chaseDist, roamDist, attackDist, moveSpeed, friction, chargeTime, chargeVelocity;
-    State currentState;
-    public Animator animator;
-    public Rigidbody2D rigidBody;
-    public Transform transform;
+    private State currentState;
 
+    [SerializeField] private GameObject playerObject;
+
+    [Header("Distances")]
+    [SerializeField] private float chaseDist = 6f;
+    [SerializeField] private float roamDist = 10f;
+    [SerializeField] private float attackDist = 2f;
+
+    [Header("Speeds")]
+    [SerializeField] private float moveSpeed = 2f;
+    [SerializeField] private float friction = 0.1f;
+    [SerializeField] private float chargeLiftSpeed = 3f;
+    [SerializeField] private float attackSpeed = 7f;
+
+    [Header("Timers")]
+    [SerializeField] private float chargeTime = 1f;
+    [SerializeField] private float attackDuration = 0.5f;
     [SerializeField] private float hitCooldown = 4f;
-    private float hitCooldownEnd, timeStorage;
 
+    private float hitCooldownEnd;
+    private float chargeStartTime;
+    private float attackStartTime;
     private bool beganCharging;
+    private Vector2 attackDirection;
 
-    // Start is called before the first frame update
+    private Rigidbody2D rb;
+    private Animator animator;
+    private Vector2 roamTarget;
+
     void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
         currentState = State.Roam;
-        targetPosition = (Vector2)transform.position + new Vector2(Random.Range(-roamDist, roamDist), Random.Range(-roamDist, roamDist));
+        roamTarget = GetRandomRoamPosition();
         beganCharging = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (currentState == State.Roam)
-        {
-            if (Distance(gameObject, playerObject) < chaseDist)
-            {
-                currentState = State.Chase;
-                Debug.Log("Bat state is now chase");
-            }
-            targetPosition = transform.position;
-            //targetPosition = new Vector3(Mathf.Random(), Mathf.Random(), 0);
-        }
-        else if (currentState == State.Chase)
-        {
-            if (Distance(gameObject, playerObject) > roamDist)
-            {
-                currentState = State.Roam;
-                Debug.Log("Bat state is now roam");
-            }
-            if (Distance(gameObject, playerObject) < attackDist)
-            {
-                currentState = State.Charge;
-                Debug.Log("Bat state is now charge");
-            }
+        float distToPlayer = Vector2.Distance(transform.position, playerObject.transform.position);
 
-            targetPosition = playerObject.transform.position;
-
-        }
-        else if (currentState == State.Attack)
+        switch (currentState)
         {
-            if (Time.time > hitCooldownEnd)
-            {
-                if (Distance(gameObject, playerObject) < attackDist)
+            case State.Roam:
+                if (distToPlayer < chaseDist)
                 {
-                    Debug.Log("Bat attacking");
-                    targetPosition = playerObject.transform.position;
+                    currentState = State.Chase;
+                }
+                else if (Vector2.Distance(transform.position, roamTarget) < 0.5f)
+                {
+                    roamTarget = GetRandomRoamPosition();
+                }
+                MoveToward(roamTarget, moveSpeed);
+                break;
+
+            case State.Chase:
+                if (distToPlayer > roamDist)
+                {
+                    currentState = State.Roam;
+                    roamTarget = GetRandomRoamPosition();
+                }
+                else if (distToPlayer < attackDist)
+                {
+                    currentState = State.Charge;
+                    beganCharging = false;
                 }
                 else
                 {
-                    currentState = State.Roam;
+                    MoveToward(playerObject.transform.position, moveSpeed);
                 }
-            }
-            else
-            {
-                // Reset beganCharging so next Charge starts fresh
-                beganCharging = false;
-                currentState = State.Charge;
-            }
+                break;
+
+            case State.Charge:
+                if (!beganCharging)
+                {
+                    chargeStartTime = Time.time;
+                    beganCharging = true;
+                    Debug.Log("Bat is charging...");
+                }
+
+                if (Time.time < chargeStartTime + chargeTime)
+                {
+                    rb.velocity = Vector2.up * chargeLiftSpeed;
+                }
+                else
+                {
+                    attackDirection = (playerObject.transform.position - transform.position).normalized;
+                    attackStartTime = Time.time;
+                    currentState = State.Attack;
+                    beganCharging = false;
+                    Debug.Log("Bat is attacking!");
+                }
+                break;
+
+            case State.Attack:
+                rb.velocity = attackDirection * attackSpeed;
+
+                if (Time.time > attackStartTime + attackDuration)
+                {
+                    currentState = State.Roam;
+                    roamTarget = GetRandomRoamPosition();
+                }
+                break;
         }
-        else if (currentState == State.Charge)
-        {
-            if (!beganCharging)
-            {
-                timeStorage = Time.time;
-                beganCharging = true;
-            }
-
-            if (Time.time < timeStorage + chargeTime)
-            {
-                Debug.Log("Bat charging...");
-                // Optional: Face the player or move toward a pre-charge direction
-                targetPosition = rigidBody.position + new Vector2(0f, 10f);
-            }
-            else
-            {
-                currentState = State.Attack;
-                beganCharging = false; // reset for next Charge
-            }
-        }
-
-        Move(targetPosition);
-
     }
 
-    protected float Distance(GameObject self, GameObject other)
+    private Vector2 GetRandomRoamPosition()
     {
-        Vector3 selfPos = self.transform.position;
-        Vector3 otherPos = other.transform.position;
-
-        float selfX = selfPos.x;
-        float selfY = selfPos.y;
-        float otherX = otherPos.x;
-        float otherY = otherPos.y;
-
-        return Mathf.Sqrt((Mathf.Pow(otherX - selfX, 2f)) + (Mathf.Pow(otherY - selfY, 2f)));
+        Vector2 currentPos = transform.position;
+        return currentPos + new Vector2(Random.Range(-roamDist, roamDist), Random.Range(-roamDist, roamDist));
     }
 
-    protected void Move(Vector2 targetPos)
+    private void MoveToward(Vector2 target, float speed)
     {
-        Vector2 currentPosition = transform.position;
-        Vector2 direction = (targetPos - currentPosition).normalized;
-
-        if ((targetPos - currentPosition).magnitude > 0.1f)
+        Vector2 direction = (target - (Vector2)transform.position);
+        if (direction.magnitude > 0.1f)
         {
-            rigidBody.velocity = direction * moveSpeed;
+            rb.velocity = direction.normalized * speed;
         }
         else
         {
-            rigidBody.velocity *= (1 - friction);
+            rb.velocity *= (1 - friction);
         }
     }
 
-    protected void Attack(Vector2 targetPos)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        
-    }
-    
-    protected void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag == "Player")
+        if (other.CompareTag("Player") && currentState == State.Attack)
         {
-            // Damage player
+            Debug.Log("Bat hit the player!");
             hitCooldownEnd = Time.time + hitCooldown;
+            currentState = State.Roam;
+            roamTarget = GetRandomRoamPosition();
         }
-
     }
 }
