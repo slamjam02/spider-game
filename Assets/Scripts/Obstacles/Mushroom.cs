@@ -6,11 +6,11 @@ public class Mushroom : MonoBehaviour
 {
     public float bounce = 10f;
 
-    public Transform transform;
+
+    public AudioClip bounceClip;
 
     void Start()
     {
-        //transform = GetComponent(Transform);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -24,6 +24,7 @@ public class Mushroom : MonoBehaviour
             {
                 //rb.velocity = new Vector2(rb.velocity.x, bounce);
                 rb.AddForce(new Vector2(0f, bounce), ForceMode2D.Impulse);
+                AudioSource.PlayClipAtPoint(bounceClip, transform.position);
 
             }
         }

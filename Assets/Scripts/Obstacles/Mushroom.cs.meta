@@ -3,7 +3,9 @@ guid: 049dabeae32d9e14e80daddf2a112fd1
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - transform: {instanceID: 0}
+  - bounceClip: {fileID: 8300000, guid: 475e75f06f29c41c39ca5e6e9e979ae2, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
