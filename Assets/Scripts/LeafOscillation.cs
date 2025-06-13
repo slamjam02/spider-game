@@ -24,7 +24,19 @@ public class LeafOscillation : MonoBehaviour
             Bounds b = sr.bounds;
             float minX = b.center.x - b.extents.x;
             float minY = b.center.y - b.extents.y;
-            pivotWorld = new Vector3(minX, minY, b.center.z);
+            float maxX = b.center.x + b.extents.x;
+            float maxY = b.center.y + b.extents.y;
+
+            if (transform.localScale.x < 0)
+            {
+                pivotWorld = new Vector3(maxX, maxY, b.center.z);
+
+            }
+            else
+            {
+                pivotWorld = new Vector3(minX, minY, b.center.z);
+
+            }
         }
         else
         {
@@ -48,6 +60,7 @@ public class LeafOscillation : MonoBehaviour
         float deltaAngle = targetAngle - lastAngle;
 
         // rotate around pivot in world space
+
         transform.RotateAround(pivotWorld, Vector3.forward, deltaAngle);
 
         // store for next frame
