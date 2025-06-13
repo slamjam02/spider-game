@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 public class PlayerMovement : MonoBehaviour
 {
 
@@ -51,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
     private float gravityScaleStorage = 0f;
     public static PlayerMovement Instance;
 
+
     void Awake()
     {
         if (Instance == null)
@@ -79,8 +81,25 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+
+            if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
+            {
+                SceneManager.LoadScene(nextSceneIndex);
+            }
+            else
+            {
+                Debug.LogWarning("No more scenes in build settings.");
+            }
+        }
+
         if (Time.timeScale > 0f)
         {
+
+
             hasJumped = false;
 
             inputDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
@@ -145,7 +164,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 //ResetMovement();
                 Jump(new Vector2(0, -1), ceilingJumpForce);
-                
+
                 lastWallJumpTime = Time.time;
             }
 

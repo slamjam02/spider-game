@@ -1133,6 +1133,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BatEnemy (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 4277738444155887669, guid: 53720fae1931ef544a24737f8852b5ba, type: 3}
+      propertyPath: playerObject
+      value: 
+      objectReference: {fileID: 1440415553}
     - target: {fileID: 4277738444155887670, guid: 53720fae1931ef544a24737f8852b5ba, type: 3}
       propertyPath: m_FlipX
       value: 1
@@ -2583,6 +2587,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BatEnemy (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 4277738444155887669, guid: 53720fae1931ef544a24737f8852b5ba, type: 3}
+      propertyPath: playerObject
+      value: 
+      objectReference: {fileID: 1440415553}
     - target: {fileID: 4277738444155887671, guid: 53720fae1931ef544a24737f8852b5ba, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -12865,6 +12873,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BatEnemy (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 4277738444155887669, guid: 53720fae1931ef544a24737f8852b5ba, type: 3}
+      propertyPath: playerObject
+      value: 
+      objectReference: {fileID: 1440415553}
     - target: {fileID: 4277738444155887670, guid: 53720fae1931ef544a24737f8852b5ba, type: 3}
       propertyPath: m_FlipX
       value: 1
@@ -13840,6 +13852,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BatEnemy
       objectReference: {fileID: 0}
+    - target: {fileID: 4277738444155887669, guid: 53720fae1931ef544a24737f8852b5ba, type: 3}
+      propertyPath: playerObject
+      value: 
+      objectReference: {fileID: 1440415553}
     - target: {fileID: 4277738444155887670, guid: 53720fae1931ef544a24737f8852b5ba, type: 3}
       propertyPath: m_FlipX
       value: 1
@@ -14284,6 +14300,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BatEnemy (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 4277738444155887669, guid: 53720fae1931ef544a24737f8852b5ba, type: 3}
+      propertyPath: playerObject
+      value: 
+      objectReference: {fileID: 1440415553}
     - target: {fileID: 4277738444155887670, guid: 53720fae1931ef544a24737f8852b5ba, type: 3}
       propertyPath: m_FlipX
       value: 1
@@ -14345,6 +14365,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BatEnemy (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 4277738444155887669, guid: 53720fae1931ef544a24737f8852b5ba, type: 3}
+      propertyPath: playerObject
+      value: 
+      objectReference: {fileID: 1440415553}
     - target: {fileID: 4277738444155887671, guid: 53720fae1931ef544a24737f8852b5ba, type: 3}
       propertyPath: m_RootOrder
       value: 3
